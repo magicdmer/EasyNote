@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FindDialog</class>
+ <widget class="QDialog" name="FindDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>446</width>
+    <height>236</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="font">
+   <font>
+    <family>微软雅黑</family>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>查找</string>
+  </property>
+  <widget class="QLabel" name="labelError">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>208</y>
+     <width>421</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>441</width>
+     <height>201</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tabFind">
+    <attribute name="title">
+     <string>查找</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>62</y>
+       <width>161</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>方向</string>
+     </property>
+     <widget class="QRadioButton" name="radioButtonBackward">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>向上</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButtonForward">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>30</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>向下</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QCheckBox" name="checkBoxCaseSensitive">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>90</y>
+       <width>91</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>区分大小写</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>15</y>
+       <width>231</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButtonFind">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>15</y>
+       <width>81</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>查找下一个</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>61</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>查找内容 :</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tabReplace">
+    <attribute name="title">
+     <string>替换</string>
+    </attribute>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>18</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>微软雅黑</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>查找：</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEditReplace">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>53</y>
+       <width>261</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>51</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>微软雅黑</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>替换为：</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEditFind">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>15</y>
+       <width>261</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButtonReplace">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>13</y>
+       <width>75</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>替换</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButtonReplaceAll">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>52</y>
+       <width>75</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>替换全部</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>90</y>
+       <width>151</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>方向</string>
+     </property>
+     <widget class="QRadioButton" name="radioButtonBackward_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>向上</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButtonForward_2">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>30</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>向下</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QCheckBox" name="checkBoxCaseSensitive_2">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>120</y>
+       <width>91</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>区分大小写</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>pushButtonFind</tabstop>
+  <tabstop>checkBoxCaseSensitive</tabstop>
+  <tabstop>radioButtonBackward</tabstop>
+  <tabstop>radioButtonForward</tabstop>
+  <tabstop>lineEditFind</tabstop>
+  <tabstop>lineEditReplace</tabstop>
+  <tabstop>pushButtonReplace</tabstop>
+  <tabstop>pushButtonReplaceAll</tabstop>
+  <tabstop>checkBoxCaseSensitive_2</tabstop>
+  <tabstop>radioButtonBackward_2</tabstop>
+  <tabstop>radioButtonForward_2</tabstop>
+  <tabstop>tabWidget</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
