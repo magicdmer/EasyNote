@@ -1,7 +1,9 @@
 ﻿#include "notewidget.h"
 #include "ui_notewidget.h"
+#include "helpfunc.h"
 #include <QFile>
 #include <QSettings>
+#include <QDir>
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
 # pragma execution_character_set("utf-8")
@@ -25,6 +27,11 @@ NoteWidget::NoteWidget(QWidget *parent) :
 }
 
 NoteWidget::NoteWidget(QWidget *parent,QString noteName, QString fileName, QFont font) :
+    NoteWidget(parent, noteName, QString(), fileName, font)
+{
+}
+
+NoteWidget::NoteWidget(QWidget *parent,QString noteName,QString groupName, QString fileName, QFont font) :
     QWidget(parent),
     ui(new Ui::NoteWidget)
 {
@@ -36,6 +43,7 @@ NoteWidget::NoteWidget(QWidget *parent,QString noteName, QString fileName, QFont
     ui->verticalLayout->addWidget(m_textEdit);
 
     m_noteName = noteName;
+    m_group = groupName;
 
     setTextFont(font);
     setFile(fileName);
@@ -100,7 +108,7 @@ bool NoteWidget::load()
     {
         return false;
     }
-    QString fileContent = file.readAll();
+    QString fileContent = QString::fromUtf8(file.readAll());
     file.close();
 
     m_textEdit->setPlainText(fileContent);
@@ -130,8 +138,9 @@ bool NoteWidget::save()
 
 bool NoteWidget::setFile(QString &fileName)
 {
-    setObjectName(fileName);
-    m_filePath = QString("data\\%1\\%2.txt").arg(m_noteName).arg(fileName);
+    setObjectName(m_group.isEmpty() ? fileName : (m_group + QLatin1Char('/') + fileName));
+    QDir().mkpath(groupPath(m_noteName, m_group));
+    m_filePath = noteFilePath(m_noteName, m_group, fileName);
     if (!QFile::exists(m_filePath))
     {
         return save();
@@ -144,13 +153,13 @@ bool NoteWidget::setFile(QString &fileName)
 
 bool NoteWidget::rename(QString &newName)
 {
-    QString newFilePath = QString("data\\%1\\%2.txt").arg(m_noteName).arg(newName);
+    QString newFilePath = noteFilePath(m_noteName, m_group, newName);
     if (QFile::exists(m_filePath) && !QFile::rename(m_filePath,newFilePath))
     {
         return false;
     }
 
-    setObjectName(newName);
+    setObjectName(m_group.isEmpty() ? newName : (m_group + QLatin1Char('/') + newName));
     m_filePath = newFilePath;
 
     return true;
@@ -184,16 +193,24 @@ bool NoteWidget::find(QString &text, QTextDocument::FindFlags flags)
 
 bool NoteWidget::replace(QString &findText, QString &replaceText, QTextDocument::FindFlags flags, bool replaceAll)
 {
+    if (findText.isEmpty())
+    {
+        return false;
+    }
+
     if (replaceAll)
     {
-        m_textEdit->moveCursor(QTextCursor::Start);
+        bool replaced = false;
+        m_textEdit->moveCursor((flags & QTextDocument::FindBackward) ? QTextCursor::End : QTextCursor::Start);
         while(m_textEdit->find(findText, flags))
         {
+            replaced = true;
             m_textEdit->textCursor().removeSelectedText();
             if (!replaceText.isEmpty())
                 m_textEdit->textCursor().insertText(replaceText);
         }
         m_textEdit->moveCursor(QTextCursor::Start);
+        return replaced;
     }
     else
     {
@@ -250,7 +267,7 @@ void NoteWidget::setTextFont(QFont &font)
 {
     m_textEdit->setFont(font);
 
-    QSettings setting("EasyNote.ini",QSettings::IniFormat,this);
+    QSettings setting(settingsFile(),QSettings::IniFormat,this);
     int tabWidth = setting.value("tab_width",4).toInt();
     setTabWidth(tabWidth);
 }
@@ -268,6 +285,12 @@ bool NoteWidget::isEmpty()
 
 void NoteWidget::deletefile()
 {
+    // 必须先处理磁盘文件再 clear, 否则进了回收站也是空文件
+    if (!m_textEdit->toPlainText().isEmpty())
+    {
+        moveToTrash(m_filePath);
+    }
+
     m_textEdit->clear();
 }
 

@@ -12,6 +12,33 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
 
     updateLineNumberAreaWidth(0);
+    flattenInactivePalette();
+    qApp->installEventFilter(this);
+}
+
+void CodeEditor::flattenInactivePalette()
+{
+    QPalette p = QApplication::palette();
+    const QPalette::ColorRole roles[] = {
+        QPalette::Text, QPalette::Base, QPalette::WindowText,
+        QPalette::Window, QPalette::Highlight, QPalette::HighlightedText
+    };
+    for (QPalette::ColorRole role : roles)
+    {
+        p.setColor(QPalette::Inactive, role, p.color(QPalette::Active, role));
+    }
+    setPalette(p);
+    viewport()->setPalette(p);
+    viewport()->update();
+}
+
+bool CodeEditor::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == qApp && event->type() == QEvent::ApplicationPaletteChange)
+    {
+        flattenInactivePalette();
+    }
+    return QPlainTextEdit::eventFilter(watched, event);
 }
 
 int CodeEditor::lineNumberAreaWidth()
@@ -115,9 +142,6 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
                 painter.setPen(Qt::gray);
             }
 
-            int w = lineNumberArea->width();
-            int fw = fontMetrics().width(number);
-            int x = (lineNumberArea->width() - fontMetrics().width(number))/2;
             painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
                              Qt::AlignHCenter, number);
         }

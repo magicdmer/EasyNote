@@ -29,12 +29,15 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
     void updateLineNumberArea(const QRect &, int);
 
 private:
+    void flattenInactivePalette();
+
     QWidget *lineNumberArea;
 };
 

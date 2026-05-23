@@ -106,7 +106,9 @@ void FindDialog::sltPushReplaceAllClicked()
 
     if (!parent->replace(text_find, text_replace, flags, true))
     {
+        ui->labelError->setStyleSheet(tr("color:red;"));
         ui->labelError->setText(tr("未找到"));
+        return;
     }
 
     ui->labelError->setStyleSheet(tr("color:black;"));
