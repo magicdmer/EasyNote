@@ -67,24 +67,14 @@ jobs:
 
       - name: Install build dependencies
         run: |
+          printf 'deb http://archive.debian.org/debian buster main\n' > /etc/apt/sources.list
+          printf 'deb http://archive.debian.org/debian-security buster/updates main\n' >> /etc/apt/sources.list
+          echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
           apt-get update
-          apt-get install -y \
-            qt5-qmake \
-            qtbase5-dev \
-            libqt5core5a \
-            libqt5gui5 \
-            libqt5widgets5 \
-            libqt5network5 \
-            build-essential \
-            libgl1-mesa-dev \
-            libxkbcommon-x11-0 \
-            libxkbcommon0 \
-            libdbus-1-3 \
-            dpkg \
-            dpkg-dev
-
+          apt-get install -y qtbase5-dev libqt5x11extras5-dev build-essential libgl1-mesa-dev libxkbcommon-x11-0 libxkbcommon0 libdbus-1-3 wget ca-certificates git dpkg dpkg-dev
       - name: Build EasyNote
         run: |
+          export QT_SELECT=5
           qmake EasyNote.pro
           make -j$(nproc)
 
@@ -137,20 +127,6 @@ jobs:
             - Network support
           EOFILE
           chmod 644 deb_root/DEBIAN/control
-          
-          # Create postinst script
-          cat > deb_root/DEBIAN/postinst << 'EOFILE'
-          #!/bin/bash
-          set -e
-          if command -v update-desktop-database &> /dev/null; then
-            update-desktop-database /usr/share/applications/ || true
-          fi
-          if command -v gtk-update-icon-cache &> /dev/null; then
-            gtk-update-icon-cache /usr/share/icons/hicolor/ 2>/dev/null || true
-          fi
-          EOFILE
-          chmod 755 deb_root/DEBIAN/postinst
-
       - name: Build DEB package
         run: |
           dpkg-deb --build deb_root EasyNote-1.0.0-amd64.deb
