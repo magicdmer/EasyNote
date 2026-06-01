@@ -48,7 +48,7 @@ jobs:
           cd ..
 
       - name: Upload Windows artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: EasyNote-Windows-Qt5
           path: EasyNote-Windows-Qt5.zip
@@ -153,7 +153,7 @@ jobs:
           ls -lah *.deb
 
       - name: Upload Linux artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: EasyNote-Linux-DEB
           path: EasyNote-*.deb

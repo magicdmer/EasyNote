@@ -33,7 +33,7 @@ jobs:
           7z a -r ..\EasyNote-Windows-Qt5.zip EasyNote\
           cd ..
       - name: Upload Windows artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: EasyNote-Windows-Qt5
           path: EasyNote-Windows-Qt5.zip
@@ -95,7 +95,7 @@ jobs:
         run: |
           dpkg-deb --build deb_root EasyNote-${VERSION}-amd64.deb
       - name: Upload Linux artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: EasyNote-Linux-DEB
           path: EasyNote-*.deb
@@ -106,7 +106,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
