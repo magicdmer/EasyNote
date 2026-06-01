@@ -1,0 +1,159 @@
+name: Manual Build Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_windows:
+        description: 'Build Windows'
+        required: false
+        default: true
+        type: boolean
+      build_linux:
+        description: 'Build Linux DEB'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  build-windows:
+    if: ${{ inputs.build_windows }}
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt5
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '5.15.11'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2019_64'
+          cache: true
+
+      - name: Build EasyNote
+        run: |
+          qmake EasyNote.pro -spec win32-msvc
+          nmake release
+
+      - name: Deploy dependencies
+        run: |
+          mkdir deploy\EasyNote
+          copy release\EasyNote.exe deploy\EasyNote\
+          windeployqt.exe --release deploy\EasyNote\EasyNote.exe
+
+      - name: Package for Windows
+        run: |
+          cd deploy
+          7z a -r ..\EasyNote-Windows-Qt5.zip EasyNote\
+          cd ..
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: EasyNote-Windows-Qt5
+          path: EasyNote-Windows-Qt5.zip
+
+  build-linux:
+    if: ${{ inputs.build_linux }}
+    runs-on: ubuntu-latest
+    container:
+      image: debian:10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            qt5-qmake \
+            qtbase5-dev \
+            libqt5core5a \
+            libqt5gui5 \
+            libqt5widgets5 \
+            libqt5network5 \
+            build-essential \
+            libgl1-mesa-dev \
+            libxkbcommon-x11-0 \
+            libxkbcommon0 \
+            libdbus-1-3 \
+            dpkg \
+            dpkg-dev
+
+      - name: Build EasyNote
+        run: |
+          qmake EasyNote.pro
+          make -j$(nproc)
+
+      - name: Create DEB package structure
+        run: |
+          # Create directory structure
+          mkdir -p deb_root/DEBIAN
+          mkdir -p deb_root/opt/EasyNote
+          mkdir -p deb_root/usr/bin
+          mkdir -p deb_root/usr/share/applications
+          mkdir -p deb_root/usr/share/icons/hicolor/64x64/apps
+          
+          # Copy binary
+          cp EasyNote deb_root/opt/EasyNote/
+          chmod 755 deb_root/opt/EasyNote/EasyNote
+          
+          # Create symlink in /usr/bin
+          ln -s /opt/EasyNote/EasyNote deb_root/usr/bin/EasyNote
+          
+          # Create .desktop file
+          cat > deb_root/usr/share/applications/EasyNote.desktop << 'EOFILE'
+          [Desktop Entry]
+          Name=EasyNote
+          Comment=A simple and useful note app
+          Exec=/opt/EasyNote/EasyNote
+          Icon=EasyNote
+          Type=Application
+          Categories=Office;Utility;
+          Terminal=false
+          EOFILE
+          chmod 644 deb_root/usr/share/applications/EasyNote.desktop
+          
+          # Create control file
+          cat > deb_root/DEBIAN/control << 'EOFILE'
+          Package: easynote
+          Version: 1.0.0
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Homepage: https://github.com/magicdmer/EasyNote
+          Depends: libc6 (>= 2.28), libgl1, libqt5core5a (>= 5.11.3), libqt5gui5 (>= 5.11.3), libqt5network5 (>= 5.11.3), libqt5widgets5 (>= 5.11.3), libstdc++6, libx11-6
+          Maintainer: magicdmer <magicdmer@gmail.com>
+          Installed-Size: 5120
+          Description: A simple and useful note app
+           EasyNote is a lightweight note-taking application based on Qt framework.
+           Features include:
+            - Simple and intuitive interface
+            - Multiple note management
+            - Rich text editing
+            - Network support
+          EOFILE
+          chmod 644 deb_root/DEBIAN/control
+          
+          # Create postinst script
+          cat > deb_root/DEBIAN/postinst << 'EOFILE'
+          #!/bin/bash
+          set -e
+          if command -v update-desktop-database &> /dev/null; then
+            update-desktop-database /usr/share/applications/ || true
+          fi
+          if command -v gtk-update-icon-cache &> /dev/null; then
+            gtk-update-icon-cache /usr/share/icons/hicolor/ 2>/dev/null || true
+          fi
+          EOFILE
+          chmod 755 deb_root/DEBIAN/postinst
+
+      - name: Build DEB package
+        run: |
+          dpkg-deb --build deb_root EasyNote-1.0.0-amd64.deb
+          ls -lah *.deb
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: EasyNote-Linux-DEB
+          path: EasyNote-*.deb
