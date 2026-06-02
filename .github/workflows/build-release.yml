@@ -83,41 +83,43 @@ jobs:
           # Copy binary
           cp EasyNote deb_root/opt/EasyNote/
           chmod 755 deb_root/opt/EasyNote/EasyNote
+
+          # Copy application icon
+          cp images/easynote.png deb_root/usr/share/icons/hicolor/64x64/apps/easynote.png
+          chmod 644 deb_root/usr/share/icons/hicolor/64x64/apps/easynote.png
           
           # Create symlink in /usr/bin
-          ln -s /opt/EasyNote/EasyNote deb_root/usr/bin/EasyNote
+          ln -s /opt/EasyNote/EasyNote deb_root/usr/bin/easynote
           
           # Create .desktop file
-          cat > deb_root/usr/share/applications/EasyNote.desktop << 'EOFILE'
+          cat > deb_root/usr/share/applications/easynote.desktop << 'EOFILE'
           [Desktop Entry]
-          Name=EasyNote
-          Comment=A simple and useful note app
-          Exec=/opt/EasyNote/EasyNote
-          Icon=EasyNote
           Type=Application
-          Categories=Office;Utility;
+          Name=EasyNote
+          Name[zh_CN]=简单记
+          Comment=Simple note-taking app
+          Exec=easynote
+          Icon=easynote
           Terminal=false
+          Categories=Office;Utility;TextEditor;
+          StartupNotify=true
           EOFILE
-          chmod 644 deb_root/usr/share/applications/EasyNote.desktop
+          chmod 644 deb_root/usr/share/applications/easynote.desktop
           
           # Create control file
-          cat > deb_root/DEBIAN/control << 'EOFILE'
+          cat > deb_root/DEBIAN/control << EOFILE
           Package: easynote
-          Version: 1.0.0
+          Version: ${VERSION}
           Section: utils
           Priority: optional
           Architecture: amd64
           Homepage: https://github.com/magicdmer/EasyNote
-          Depends: libc6 (>= 2.28), libgl1, libqt5core5a (>= 5.11.3), libqt5gui5 (>= 5.11.3), libqt5network5 (>= 5.11.3), libqt5widgets5 (>= 5.11.3), libstdc++6, libx11-6
+          Depends: libc6 (>= 2.28), libgl1, libqt5core5a (>= 5.11.3), libqt5gui5 (>= 5.11.3), libqt5network5 (>= 5.11.3), libqt5widgets5 (>= 5.11.3), libqt5x11extras5 (>= 5.11.3), libstdc++6, libx11-6
           Maintainer: magicdmer <magicdmer@gmail.com>
-          Installed-Size: 5120
-          Description: A simple and useful note app
-           EasyNote is a lightweight note-taking application based on Qt framework.
-           Features include:
-            - Simple and intuitive interface
-            - Multiple note management
-            - Rich text editing
-            - Network support
+          Installed-Size: 508
+          Description: 基于 Qt 的轻量级桌面笔记软件
+           EasyNote 是一个轻量级纯文本桌面笔记软件，
+           支持记事本分类、标签页编辑、自动清理，即时保存，托盘驻留和全局快捷键。
           EOFILE
           chmod 644 deb_root/DEBIAN/control
       - name: Build DEB package
