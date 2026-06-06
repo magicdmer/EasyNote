@@ -48,14 +48,14 @@ jobs:
       - name: Package for Windows
         run: |
           cd deploy
-          7z a -r ..\EasyNote-Windows-Qt5.zip EasyNote\
+          7z a -r ..\EasyNote_1.0.0_win32.zip EasyNote\
           cd ..
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: EasyNote-Windows-Qt5
-          path: EasyNote-Windows-Qt5.zip
+          path: EasyNote_1.0.0_win32.zip
 
   build-linux:
     if: ${{ inputs.build_linux }}
@@ -135,11 +135,11 @@ jobs:
         env:
           VERSION: 1.0.0
         run: |
-          dpkg-deb --build deb_root EasyNote-${VERSION}-amd64.deb
+          dpkg-deb --build deb_root EasyNote_${VERSION}_amd64.deb
           ls -lah *.deb
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: EasyNote-Linux-DEB
-          path: EasyNote-*.deb
+          path: EasyNote_*.deb
