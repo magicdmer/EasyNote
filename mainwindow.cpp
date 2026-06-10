@@ -359,7 +359,6 @@ QTreeWidgetItem* MainWindow::addGroupItem(const QString& groupName)
         insertAt++;
     }
     tree->insertTopLevelItem(insertAt, item);
-    item->setExpanded(true);
     return item;
 }
 
