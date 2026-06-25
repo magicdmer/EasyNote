@@ -896,9 +896,7 @@ void MainWindow::sltHotKey()
 {
     if (this->isHidden())
     {
-        this->show();
-
-        this->setWindowState(this->windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+        showMainWindow();
     }
     else
     {
@@ -906,11 +904,19 @@ void MainWindow::sltHotKey()
     }
 }
 
+void MainWindow::showMainWindow()
+{
+    this->show();
+    this->setWindowState(this->windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+    this->raise();
+    this->activateWindow();
+}
+
 void MainWindow::sltTrayActived(QSystemTrayIcon::ActivationReason reason)
 {
-    if (reason == QSystemTrayIcon::DoubleClick)
+    if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick)
     {
-        sltHotKey();
+        showMainWindow();
     }
 }
 
