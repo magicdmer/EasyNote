@@ -79,6 +79,22 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
 
+void CodeEditor::keyPressEvent(QKeyEvent *event)
+{
+#ifdef Q_OS_LINUX
+    if (event->key() == Qt::Key_Y &&
+        (event->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier | Qt::MetaModifier)) ==
+            Qt::ControlModifier)
+    {
+        redo();
+        event->accept();
+        return;
+    }
+#endif
+
+    QPlainTextEdit::keyPressEvent(event);
+}
+
 void CodeEditor::dealBackTab()
 {
     QTextCursor cur = textCursor();
@@ -152,4 +168,3 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
         ++blockNumber;
     }
 }
-
